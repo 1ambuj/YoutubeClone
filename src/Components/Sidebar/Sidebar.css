@@ -12,5 +12,44 @@
     margin-right:20px;
 }
 .side-link {
-  display: flex
+  display: flex;
+  align-items: center;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+  cursor: pointer;
+}
+.sidebar hr{
+    border:0;
+    height: 1px;
+    background: #ccc;
+    width:85%;
+}
+.subscribe-list h3{
+   font-size: 13px;
+   margin: 20px 0;
+   color: #5a5a5a; 
+}
+.subscribed-list img{
+     border-radius: 50%;
+     width:25px;
+     margin-right: 20px;
+}
+.small-sidebar{
+    width: 5%;
+}
+.small-sidebar p{
+    display: none;
+}
+.small-sidebar h3{
+    display: none;
+}
+.small-sidebar hr{
+   width:50%;
+   margin-bottom:25px;
+}
+.hed{
+    margin:20px 0px;
+}
+.side-link.active img{
+   padding-bottom: 3px solid red; 
 }
