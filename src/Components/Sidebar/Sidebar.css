@@ -51,5 +51,6 @@
     margin:20px 0px;
 }
 .side-link.active img{
-   padding-bottom: 3px solid red; 
+    padding-bottom:3px;
+   border-bottom: 3px solid red; 
 }
