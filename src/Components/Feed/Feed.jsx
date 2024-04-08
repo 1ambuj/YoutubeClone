@@ -11,6 +11,7 @@ import thumbnail8 from "../../assets/thumbnail8.png"
 import {API_KEY} from "../../data.js"
 import { Link } from 'react-router-dom'
 import {viewCount} from  "../../data.js"
+import moment from 'moment'
 const Feed = ({category}) => {
      
     const [data , setData] = useState([])
@@ -32,7 +33,7 @@ const Feed = ({category}) => {
                     <img src={item.snippet.thumbnails.medium.url} alt="" /> 
                     <h2>{item.snippet.title}</h2>
                     <h3>{item.snippet.channelTitle}</h3>
-                    <p>{viewCount(item.statistics.viewCount)} views &bull; 2days ago</p>
+                    <p>{viewCount(item.statistics.viewCount)} views &bull; {moment(item.snippet.publishedAt).fromNow()}</p>
                 </Link>
             )
         })
