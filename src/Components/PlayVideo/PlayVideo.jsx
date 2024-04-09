@@ -14,6 +14,7 @@ import moment from 'moment'
 const PlayVideo = () => {
     const  [apiData , setApiData] = useState(null)
     const [channelData , setChannelData] = useState(null);
+    const [comment , setComment] = useState([]);
 
     const param = useParams()
     const fetchVideoData = async () =>{
@@ -23,16 +24,36 @@ const PlayVideo = () => {
     }
     const fetchOtherData = async ()=>{
         //fetching chanel data
-        const channelData_url = ` https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2C%20statistics&id=${apiData.snippet.channelId}&key=${API_KEY}`
+        const channelData_url = `https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2C%20statistics&id=${apiData.snippet.channelId}&key=${API_KEY}`
         await fetch(channelData_url).then(res => res.json()).then(data => setChannelData(data.items[0]))
+        const CommentData_url = ` https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet%2Creplies&maxResults=50&videoId=${param.videoId}&key=${API_KEY}`
+        await fetch(CommentData_url).then(res => res.json()).then(data => setComment(data.items))
+
     }
     useEffect(()=>{
         fetchVideoData()
-    },[])
+    },[param.videoId])
     useEffect(()=>{
         fetchOtherData()
     },[apiData])
- 
+
+    const render = comment.map((item,index)=>{
+        return(
+        <div key={index} className="comment">
+            <img src={item.snippet.topLevelComment.snippet.authorProfileImageUrl} alt="" /> 
+            <div>
+                <h3>{item.snippet.topLevelComment.snippet.authorDisplayName} <span>{moment(item.snippet.topLevelComment.snippet.publishedAt).fromNow()}</span></h3>
+                <p>{item.snippet.topLevelComment.snippet.textOriginal}</p>
+                <div className="comment-action">
+                    <img src={like} alt="" /> 
+                    <span>{viewCount(item.snippet.topLevelComment.snippet.likeCount)}</span>
+                    <img src={dislike} alt="" />
+                </div>
+            </div>
+        </div>
+        )
+    })
+  
   return (
     <div className="play-video">
       {/* <video src={video1} controls autoPlay muted></video>  */}
@@ -51,8 +72,8 @@ const PlayVideo = () => {
          <div className="publisher">
               <img src={channelData?channelData.snippet.thumbnails.default.url:""} alt="" /> 
               <div>
-                 <p>{apiData? apiData.snippet.channelTitle:""}</p>
-                 <span>{}</span>
+                 <p>{apiData?apiData.snippet.channelTitle:""}</p>
+                 <span>{channelData?viewCount(channelData.statistics.subscriberCount):"1M" } Subscribers</span>
               </div> 
               <button>Subscribe</button>
            </div>
@@ -60,56 +81,7 @@ const PlayVideo = () => {
                 <p>{apiData? apiData.snippet.description.slice(0,300): ""}</p>
                 <hr />
                 <h4>{apiData? viewCount(apiData.statistics.commentCount):20} Comments</h4>
-                <div className="comment">
-                    <div className='comment-flex'>
-                        <img src={user_profile} alt="" /> 
-                        <div>
-                            <h3>Jack Nicholson <span>1 day ago</span></h3>
-                            <p>Aglobal computer Networks using standardized communication protocols.</p>
-                            <div className="comment-action">
-                                <img src={like} alt="" /> 
-                                <span>244</span>
-                                <img src={dislike} alt="" />
-                            </div>
-                        </div>
-                    </div>
-                    <div className='comment-flex'>
-                        <img src={user_profile} alt="" /> 
-                        <div>
-                            <h3>Jack Nicholson <span>1 day ago</span></h3>
-                            <p>Aglobal computer Networks using standardized communication protocols.</p>
-                            <div className="comment-action">
-                                <img src={like} alt="" /> 
-                                <span>244</span>
-                                <img src={dislike} alt="" />
-                            </div>
-                        </div>
-                    </div>
-                    <div className='comment-flex'>
-                        <img src={user_profile} alt="" /> 
-                        <div>
-                            <h3>Jack Nicholson <span>1 day ago</span></h3>
-                            <p>Aglobal computer Networks using standardized communication protocols.</p>
-                            <div className="comment-action">
-                                <img src={like} alt="" /> 
-                                <span>244</span>
-                                <img src={dislike} alt="" />
-                            </div>
-                        </div>
-                    </div>
-                    <div className='comment-flex'>
-                        <img src={user_profile} alt="" /> 
-                        <div>
-                            <h3>Jack Nicholson <span>1 day ago</span></h3>
-                            <p>Aglobal computer Networks using standardized communication protocols.</p>
-                            <div className="comment-action">
-                                <img src={like} alt="" /> 
-                                <span>244</span>
-                                <img src={dislike} alt="" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {render}
             </div>
     </div>
   )
