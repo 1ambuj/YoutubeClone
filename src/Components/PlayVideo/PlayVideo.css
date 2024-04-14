@@ -126,7 +126,7 @@
     .play-video{
        flex-basis: 100%; 
     }
-    .play-video iframe{
+    .play-video .video-container {
        width:100%;
         height:50vw;
     }

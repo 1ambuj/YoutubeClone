@@ -10,6 +10,7 @@ import user_profile from "../../assets/user_profile.jpg"
 import { useParams } from 'react-router-dom'
 import { API_KEY, viewCount } from '../../data'
 import moment from 'moment'
+import ReactPlayer from 'react-player'
 
 const PlayVideo = () => {
     const  [apiData , setApiData] = useState(null)
@@ -57,7 +58,10 @@ const PlayVideo = () => {
   return (
     <div className="play-video">
       {/* <video src={video1} controls autoPlay muted></video>  */}
-      <iframe  src={`https://www.youtube.com/embed/${param.videoId}?autoplay=1`}  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      {/* <iframe  src={`https://www.youtube.com/embed/${param.videoId}?autoplay=1`}  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" fullScreen></iframe> */}
+      <div className="video-container">
+        <ReactPlayer width="100%" height="100%" style={{ margin: '0 auto' }} controls url='https://www.youtube.com/watch?v=LXb3EKWsInQ' />
+      </div>
       <h3>{apiData?apiData.snippet.title: "Title here"}</h3>
       <div className="play-video-info">
           <p>{apiData?viewCount(apiData.statistics.viewCount):"16k"} Views &bull; {apiData?moment(apiData.snippet.publishedAt).fromNow:".3days ago"}</p>

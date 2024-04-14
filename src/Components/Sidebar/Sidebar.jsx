@@ -14,8 +14,10 @@ import simon from "../../assets/simon.png"
 import tom from "../../assets/tom.png"
 import megon from "../../assets/megan.png"
 import cameron from "../../assets/cameron.png"
+import { useVideoContext } from '../../Contex/VideoContextProvider'
 
-const Sidebar = ({sidebar, category, setCategory}) => {
+const Sidebar = ({sidebar}) => {
+  const { category, setCategory } = useVideoContext()
   return (
     <div className={`sidebar ${sidebar? "":"small-sidebar"}`}>
         <div className='sortcut-links'>

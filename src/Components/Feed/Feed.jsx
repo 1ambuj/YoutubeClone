@@ -12,30 +12,22 @@ import {API_KEY} from "../../data.js"
 import { Link } from 'react-router-dom'
 import {viewCount} from  "../../data.js"
 import moment from 'moment'
-const Feed = ({category}) => {
-    
-     
-    const [data , setData] = useState([])
-    const fetchData = async () =>{
-        const videoList_url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2C%20statistics&chart=mostPopular&maxResults=50&regionCode=US&videoCategoryId=${category}&key=${API_KEY}`
-        await fetch(videoList_url).then(res => res.json()).then(data => setData(data.items))
-    }
+import { useVideoContext } from '../../Contex/VideoContextProvider.jsx'
 
-    useEffect(()=>{
-        fetchData()
-    },[category])
+const Feed = () => {
     
-   
+   const {data}  = useVideoContext()
+  
   return (
 
        <div className="feed">
         {data.map((item,index)=>{
             return (
-                <Link to={`video/${item.snippet.categoryId}/${item.id}`} className="card">
+                <Link to={`video/${item.snippet.categoryId}/${item.id}`} className="card" key={index}>
                         <img src={item.snippet.thumbnails.medium.url} alt="" /> 
                         <h2>{item.snippet.title}</h2>
                         <h3>{item.snippet.channelTitle}</h3>
-                        <p>{viewCount(item.statistics.viewCount)} views &bull; {moment(item.snippet.publishedAt).fromNow()}</p>
+                        <p>{item.statistics? viewCount(item.statistics.viewCount):"1k"} views &bull; {moment(item.snippet.publishedAt).fromNow()}</p>
                 </Link>
             )
         })
