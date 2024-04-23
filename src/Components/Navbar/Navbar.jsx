@@ -9,21 +9,28 @@ import notification_icon from "../../assets/notification.png"
 import profile_icon from "../../assets/jack.png"
 import { Link } from 'react-router-dom'
 import { useVideoContext } from '../../Contex/VideoContextProvider'
+import { useNavigate } from 'react-router-dom'
 
 const Navbar = ({setSidebar}) => {
+  const navigate = useNavigate()
   const [formData , setFormData] = useState("")
-  const { searchVideo } = useVideoContext()
+  const { searchVideo,handleChangeSearchText  } = useVideoContext()
 
   function handleChange(e){
      setFormData(e.target.value)
   }
 
   function handleEnter(e) {
-    if (e.key === 'Enter') searchVideo(formData)
+    if (e.key === 'Enter') {
+      handleClick()
+    } 
   }
 
-  function handleClick() {
-    searchVideo(formData)
+  async function handleClick() {
+    handleChangeSearchText (formData)
+
+    await searchVideo(formData)
+      navigate(`/search?t=${formData}`)
   }
   
    

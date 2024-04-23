@@ -1,29 +1,84 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import "./Feed.css"
-import thumbnail1 from "../../assets/thumbnail1.png"
-import thumbnail2 from "../../assets/thumbnail2.png"
-import thumbnail3 from "../../assets/thumbnail3.png"
-import thumbnail4 from "../../assets/thumbnail4.png"
-import thumbnail5 from "../../assets/thumbnail5.png"
-import thumbnail6 from "../../assets/thumbnail6.png"
-import thumbnail7 from "../../assets/thumbnail7.png"
-import thumbnail8 from "../../assets/thumbnail8.png"
 import {API_KEY} from "../../data.js"
-import { Link } from 'react-router-dom'
+import { Link,  useLocation } from 'react-router-dom'
 import {viewCount} from  "../../data.js"
 import moment from 'moment'
 import { useVideoContext } from '../../Contex/VideoContextProvider.jsx'
 
-const Feed = () => {
-    
-   const {data}  = useVideoContext()
+const getVideoLink = (item, categoryId) => {
+  const videoId = typeof item.id === 'string' ? item.id : item.id.videoId
+  let videoLink = `video/${videoId}`;
+
+  if (categoryId) {
+    videoLink += `?categoryId=${categoryId}`
+  }
+
+  return videoLink
+}
+
+const Feed = ({data,fetchVideos, isLoading}) => {
+ 
+  
+  const location = useLocation()
+
+  const sentinelRef = useRef()
+  
+   const containerRef = React.useRef();
+  // const handleScroll = async ()=>{
+  //   const { scrollTop, clientHeight, scrollHeight} = containerRef.current;
+  //   if(scrollTop + clientHeight >= scrollHeight -100 && !isLoading){
+  //     console.log('insid ethe scri', )
+  //     //  fetchVideos()
+
+  //   }
+  // }
+
+  // useEffect(()=>{
+  //   const container = containerRef.current
+  //   container.addEventListener("scroll",handleScroll)
+
+  //   return ()=>{
+  //     container.removeEventListener('scroll', handleScroll);
+  //   }
+  // },[])
+
+  useEffect(() => {
+    const options = {
+      root: null, // Use the viewport as the root
+      rootMargin: '0px', // No margin
+      threshold: 0.1, // Trigger when 10% of the sentinel is visible
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        console.log(entry)
+        if (entry.isIntersecting && !isLoading) {
+          // Fetch more data when the sentinel enters the viewport
+          fetchVideos();
+        }
+      });
+    }, options);
+
+    if (sentinelRef.current) {
+      observer.observe(sentinelRef.current);
+    }
+
+    return () => {
+      if (sentinelRef.current) {
+        observer.unobserve(sentinelRef.current);
+      }
+    };
+  }, [isLoading, fetchVideos]);
   
   return (
 
-       <div className="feed">
-        {data.map((item,index)=>{
+       <div className="feed" ref={containerRef}>
+     
+        { data.map((item,index)=>{
+          
             return (
-                <Link to={`video/${item.snippet.categoryId}/${item.id}`} className="card" key={index}>
+                <Link to={getVideoLink(item, item.snippet?.categoryId)} className="card" key={index}>
                         <img src={item.snippet.thumbnails.medium.url} alt="" /> 
                         <h2>{item.snippet.title}</h2>
                         <h3>{item.snippet.channelTitle}</h3>
@@ -32,9 +87,12 @@ const Feed = () => {
             )
         })
        }
+       {isLoading && <p>Loading...</p>}
+       <div ref={sentinelRef} style={{ height: '10px' }} />
        </div>
     
   )
 }
 
 export default Feed
+

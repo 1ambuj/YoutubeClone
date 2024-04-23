@@ -4,6 +4,8 @@
     grid-column-gap:16px;
     grid-row-gap:30px;
     margin-top:15px;
+    height:600px;
+    overflow-y: auto;
 }
 .card img{
     width: 100%;

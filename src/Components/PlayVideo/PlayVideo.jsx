@@ -18,10 +18,14 @@ const PlayVideo = () => {
     const [comment , setComment] = useState([]);
 
     const param = useParams()
+    
+  
     const fetchVideoData = async () =>{
         //Fetching Videos Data 
        const videoDetails_url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2C%20statistics&id=${param.videoId}&key=${API_KEY}`
-       fetch(videoDetails_url).then(res => res.json()).then(data => setApiData(data.items[0]))
+       const response = await fetch(videoDetails_url)
+       const data = await response.json()
+       setApiData(data.items[0])
     }
     const fetchOtherData = async ()=>{
         //fetching chanel data
@@ -31,11 +35,15 @@ const PlayVideo = () => {
         await fetch(CommentData_url).then(res => res.json()).then(data => setComment(data.items))
 
     }
-    useEffect(()=>{
+
+    useEffect(() => {
         fetchVideoData()
-    },[param.videoId])
+    }, [param.videoId])
+
     useEffect(()=>{
-        fetchOtherData()
+        if (apiData) {
+            fetchOtherData()
+        }
     },[apiData])
 
     const render = comment.map((item,index)=>{
@@ -60,7 +68,7 @@ const PlayVideo = () => {
       {/* <video src={video1} controls autoPlay muted></video>  */}
       {/* <iframe  src={`https://www.youtube.com/embed/${param.videoId}?autoplay=1`}  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" fullScreen></iframe> */}
       <div className="video-container">
-        <ReactPlayer width="100%" height="100%" style={{ margin: '0 auto' }} controls url='https://www.youtube.com/watch?v=LXb3EKWsInQ' />
+        <ReactPlayer width="100%" height="100%" style={{ margin: '0 auto' }} controls url={`https://www.youtube.com/watch?v=${param.videoId}`} />
       </div>
       <h3>{apiData?apiData.snippet.title: "Title here"}</h3>
       <div className="play-video-info">
